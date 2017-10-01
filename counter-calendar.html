@@ -1,0 +1,202 @@
+<style>
+    body {
+        font-family: monospace;
+    }
+
+    table tr th {
+        background: #ddd;
+        font-weight: bold;
+    }
+
+    ul, ol {
+        padding: 0;
+    }
+
+    li {
+        list-style-type: none;
+    }
+
+    .filter .filter-item {
+        width: 32%;
+        margin-right: 5px;
+        margin-bottom: 5px;
+        float: left;
+    }
+
+    .filter .input-group .input-group-addon {
+        width: 110px;
+    }
+
+    .filter .errmsg {
+        color: red;
+        line-height: 34px;
+    }
+
+    .td-category .glyphicon-arrow-up {
+        color: #f74;
+    }
+
+    .td-category .glyphicon-arrow-down {
+        color: #0a0;
+    }
+
+    .td-content-header .text {
+        width: 160px;
+        display: inline-block;
+    }
+
+    .td-content-header span {
+        margin-right: 10px;
+    }
+
+    .td-content .glyphicon-eye-close {
+        color: red;
+    }
+
+    .td-content .glyphicon-eye-open {
+        color: green;
+    }
+
+    .group-list .group {
+    }
+
+    .group-title a {
+        color: black;
+    }
+
+    .group-image-small .group-images li {
+        width: 33%;
+        float: left;
+        margin-right: 1px;
+    }
+
+    .group-image-small .group-images li:last-child {
+        margin-right: 0;
+    }
+
+    .group-list img {
+        width: 100%;
+    }
+
+    .group-image-middle .left {
+        width: 66%;
+    }
+
+    .group-image-middle .right {
+        width: 33%;
+    }
+
+    .group-list-text li {
+        margin-bottom: 8px;
+        line-height: 13px;
+    }
+
+    .group-list-text li a {
+    }
+
+    .group-list-text .index {
+        margin-right: 8px;
+        font-weight: bold;
+    }
+
+    .cell-33 .participated {
+        color: #3cf;
+    }
+
+    .cell-33 .background {
+        margin-bottom: 5px;
+    }
+
+    .cell-33 .status {
+        border: #3cf solid 1px;
+        border-radius: 2px;
+        color: #3cf;
+        margin-right: 10px;
+        padding: 2px 5px;
+    }
+
+    iframe {
+        width: 100%;
+    }
+
+    .history-request th {
+        width: 120px;
+    }
+
+    .history-extra th {
+        width: 115px;
+    }
+
+    table {
+        table-collapse: collapse;
+        border-top: 1px solid #DDD;
+        border-left: 1px solid #DDD;
+    }
+
+    td {
+        border-right: 1px solid #CCC;
+        border-bottom: 1px solid #CCC;
+    }
+
+    PRE {
+        white-space: pre-wrap;
+        border: 0;
+        background-color: #FFFFFF;
+    }
+
+</style>
+
+<div class="row" ng-controller="calendarCtrl">
+    <div class="col-md-12">
+        <!-- BEGIN LIST -->
+        <div class="portlet light bordered">
+            <div class="portlet-body">
+                <div id="counter-calendar" ng-click="change_ids()"></div>
+                <div class="row">
+                    <label>已选中: </label>
+                    <label type="text" readonly="readonly" id="pass-data-ids">{{data_ids}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- END MAIN CONTENT -->
+
+<!-- BEGIN MAIN JS -->
+<link href="counter-calendar/css/counter-calendar.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="counter-calendar/js/counter-calendar.js"></script>
+<script type="text/javascript">
+
+    $('.picktime').datetimepicker({
+        format: "yyyy-mm-dd hh:ii",
+        autoclose: true
+    });
+
+    function calendarCtrl($scope, $http) {
+        $scope.data_ids = '';
+        list_accs($http);
+
+        $scope.change_ids = function () {
+            var text = document.getElementById("pass-data-ids").value;
+            if (text == '' || text == null) {
+                return;
+            }
+            if ($scope.data_ids == text) {
+            } else {
+                $scope.data_ids = text;
+                $scope.$broadcast('to-child-ids', text);
+            }
+        }
+    }
+
+    function list_accs($http) {
+        $http.get("/source_url/list").success(function (response, status, headers, config) {
+            all_accs = response.data;
+            var date = new Date();
+            var option = {
+                date: date //new Date(2015, 1, 1)
+            }
+            $("#counter-calendar").counterCalendar(option, all_accs);
+        });
+    }
+</script>
